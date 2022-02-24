@@ -1,6 +1,11 @@
+<div class="example-header">
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Filter by name">
+  </mat-form-field>
+</div>
 <div class="mat-elevation-z8">
-  <table mat-table [dataSource]="dataSource" matSort matSortActive="created"
-  matSortDisableClear matSortDirection="desc">
+  <table mat-table [dataSource]="dataSource" matSort (matSortActive)="sortField"
+  matSortDisableClear (matSortDirection)="getSortDirection()">
 
     <!-- Position Column -->
     <ng-container matColumnDef="playerName">
@@ -52,7 +57,7 @@
 
 
   <mat-paginator #paginator [length]="length" [pageIndex]="pageIndex" 
-  [pageSize]="pageSize"  aria-label="Select page">
+  [pageSize]="amount" (page)="pageChanged($event)"  aria-label="Select page">
   </mat-paginator>
 
 </div>

@@ -13,9 +13,6 @@ export class ApiClientService {
     private baseUrl = environment.settings.api.baseUrl;
     private leaderboardEndpoint = environment.settings.api.leaderboardEndpoint;
     private scoreboardEndpoing = environment.settings.api.scoreboardEndpoing;
-    httpOptions = {
-        headers: new HttpHeaders(environment.settings.api.httpHeaders)
-    };
     
 
     constructor(
@@ -24,6 +21,7 @@ export class ApiClientService {
 
         getPlayerStats(requestResponse: RequestResponse<Player>): Observable<RequestResponse<Player>>{
             let args = {
+                headers: new HttpHeaders(environment.settings.api.httpHeaders),
                 params: new HttpParams({
                     fromObject:{
                         offset: Number(requestResponse.offset),
@@ -34,11 +32,7 @@ export class ApiClientService {
                     }
                 })
             };
-            return this.http.get<RequestResponse<Player>>(this.baseUrl + this.leaderboardEndpoint, args).
-                pipe(
-                    tap(_ => {}),
-                    catchError(this.handleError<RequestResponse<Player>>('getPlayerStats'))
-                );
+            return this.http.get<RequestResponse<Player>>(this.baseUrl + this.leaderboardEndpoint, args) 
         }
 
         private handleError<T>(operation = 'operation', result?: T) {
