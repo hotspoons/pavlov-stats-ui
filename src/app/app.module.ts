@@ -10,21 +10,41 @@ import { MatInputModule } from '@angular/material/input';
 import {MatPaginatorModule } from '@angular/material/paginator';
 import {MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatSortModule} from '@angular/material/sort';
-import { LeaderboardComponent } from 'src/leaderboard/leaderboard.component';
+import { LeaderboardComponent } from 'src/app/leaderboard/leaderboard.component';
+import { LayoutModule } from '@angular/cdk/layout';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ScoreboardComponent } from './scoreboard/scoreboard.component';
+import { AppRoutingModule } from './app-routing.module';
+
+
 @NgModule({
   declarations: [
     AppComponent,
-    LeaderboardComponent
+    LeaderboardComponent,
+    ScoreboardComponent,
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
     MatTableModule,
     MatInputModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
-    MatSortModule
+    MatSortModule,
+    MatTabsModule,
+    LayoutModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

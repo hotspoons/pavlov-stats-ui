@@ -3,21 +3,24 @@ import { Injectable } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { Player } from '../dtos/player';
-import { RequestResponse, Sort } from '../dtos/request-response';
-import { Scoreboard } from '../dtos/scoreboard';
+import { Player } from './dtos/player';
+import { RequestResponse, Sort } from './dtos/request-response';
+import { Scoreboard } from './dtos/scoreboard';
+import { environment } from '../../environments/environment';
  
 @Injectable({ providedIn: 'root' })
-export class ApiClientService{ 
-    private baseUrl = "http://localhost:8080";     // TODO configuration
-    private leaderboardEndpoint = "/leaderboard";  // TODO configuration
-    private scoreboardEndpoing = "/scoreboard";    // TODO configuration
+export class ApiClientService { 
+    private baseUrl = environment.settings.api.baseUrl;
+    private leaderboardEndpoint = environment.settings.api.leaderboardEndpoint;
+    private scoreboardEndpoing = environment.settings.api.scoreboardEndpoing;
     httpOptions = {
-        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+        headers: new HttpHeaders(environment.settings.api.httpHeaders)
     };
+    
 
     constructor(
-        private http: HttpClient) { }
+        private http: HttpClient) {
+         }
 
         getPlayerStats(requestResponse: RequestResponse<Player>): Observable<RequestResponse<Player>>{
             let args = {
@@ -25,7 +28,7 @@ export class ApiClientService{
                     fromObject:{
                         offset: Number(requestResponse.offset),
                         amount: Number(requestResponse.amount),
-                        sort: Sort[requestResponse.sort],
+                        sort: Sort.getValue(requestResponse.sort),
                         ascending: requestResponse.ascending,
                         q: requestResponse.q
                     }

@@ -1,3 +1,15 @@
-<h1>{{title}}
-</h1>
-<leaderboard></leaderboard>
+<mat-toolbar color="primary">
+    <span>{{title}}</span>
+    <!-- This fills the remaining space of the current row -->
+    <span class="example-fill-remaining-space"></span>  
+  </mat-toolbar>
+  <nav mat-tab-nav-bar>
+    <a mat-tab-link
+    *ngFor="let link of navLinks"
+    [routerLink]="link.link"
+    routerLinkActive #rla="routerLinkActive"
+    [active]="rla.isActive">
+   {{link.label}}
+  </a>
+  </nav>
+  <router-outlet></router-outlet>

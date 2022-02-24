@@ -5,11 +5,12 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiClientService } from '../apiclient/apiclient.service';
-import { RequestResponse, Sort } from 'src/dtos/request-response';
-import { Player } from 'src/dtos/player';
+import { RequestResponse, Sort } from 'src/app/apiclient/dtos/request-response';
+import { Player } from 'src/app/apiclient/dtos/player';
+import { environment } from '../../environments/environment';
 
 @Component({
-  selector: 'leaderboard',
+  selector: 'app-leaderboard',
   styleUrls: ['./leaderboard.component.css'],
   templateUrl: './leaderboard.component.html',
 })
@@ -27,7 +28,7 @@ export class LeaderboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private data: any;
   requestResponse: RequestResponse<Player>;
-  pageSizeOptions = [10,50,100,200];  // TODO configuration
+  pageSizeOptions = environment.settings.requestSettings.pageSizeOptions;
   length: number = 0;
   pageIndex: number = 0;
   pageSize: number = 0;
@@ -35,11 +36,11 @@ export class LeaderboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(private apiClientService: ApiClientService) {
     this.requestResponse = {
-        offset: BigInt(0),      // TODO configuration
-        amount: BigInt(50),     // TODO configuration
+        offset: BigInt(0),      
+        amount: BigInt(environment.settings.requestSettings.defaultAmount),
         resultCount: BigInt(0), 
-        sort: Sort.KDA,         // TODO configuration
-        ascending: false,       // TODO configuration
+        sort: environment.settings.requestSettings.defaultSort,
+        ascending: environment.settings.requestSettings.defaultAscending,       // TODO configuration
         q: "",
         results: []
     };

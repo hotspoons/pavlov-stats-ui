@@ -3,7 +3,23 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  settings:{
+    appTitle: 'Pavlov VR Stats for XYZ server',
+    otherLinks:[],
+    requestSettings:{
+      pageSizeOptions:[10,50,100,200],
+      defaultAmount: 2,
+      defaultSort: "KDA",
+      defaultAscending: false
+    },
+    api:{
+      baseUrl: "http://localhost:8080/api",
+      leaderboardEndpoint: "/leaderboard",
+      scoreboardEndpoing: "/scoreboard",
+      httpHeaders:{ 'Content-Type': 'application/json' }
+    }
+  }
 };
 
 /*
