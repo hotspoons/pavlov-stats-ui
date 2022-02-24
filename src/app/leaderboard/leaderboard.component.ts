@@ -29,7 +29,7 @@ export class LeaderboardComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   private data: any;
-  pageSizeOptions: any = environment.settings.requestSettings.pageSizeOptions;
+  pageSizeOptions: number[] = environment.settings.requestSettings.pageSizeOptions;
   length: number;
   amount: number;
   offset: number;

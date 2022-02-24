@@ -8,8 +8,8 @@ export const environment = {
     appTitle: 'Pavlov VR Stats for XYZ server',
     otherLinks:[],
     requestSettings:{
-      pageSizeOptions:[10,50,100,200],
-      defaultAmount: 2,
+      pageSizeOptions:[3,10,50,100,200],
+      defaultAmount: 3,
       defaultSort: "KDA",
       defaultAscending: false
     },

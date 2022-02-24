@@ -7,8 +7,9 @@ import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 // TODO how does this work for a compiled/static site? Is there a preprocessor to generate all the routes?
 export const RouteList: Routes = [
   { path: '', redirectTo: '/scoreboard', pathMatch: 'full', data:{label: 'Home'} },
-  { path: 'scoreboard', component:  ScoreboardComponent, data:{label: 'Scoreboard'}},
   { path: 'leaderboard', component:  LeaderboardComponent, data:{label: 'Leaderboard'}},
+  { path: 'scoreboard', component:  ScoreboardComponent, data:{label: 'Scoreboard'}},
+
 ];
 
 export const appRouting = RouterModule.forRoot(RouteList);
