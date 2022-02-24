@@ -1,5 +1,6 @@
 <div class="mat-elevation-z8">
-  <table mat-table [dataSource]="dataSource">
+  <table mat-table [dataSource]="dataSource" matSort matSortActive="created"
+  matSortDisableClear matSortDirection="desc">
 
     <!-- Position Column -->
     <ng-container matColumnDef="playerName">
@@ -50,8 +51,8 @@
   </table>
 
 
-  <mat-paginator #paginator [length]="requestResponse.resultCount" [pageIndex]="requestResponse.offset" 
-  [pageSize]="requestResponse.amount"  aria-label="Select page">
+  <mat-paginator #paginator [length]="length" [pageIndex]="pageIndex" 
+  [pageSize]="pageSize"  aria-label="Select page">
   </mat-paginator>
 
 </div>

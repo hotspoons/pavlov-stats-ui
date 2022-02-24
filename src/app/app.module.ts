@@ -10,9 +10,11 @@ import { MatInputModule } from '@angular/material/input';
 import {MatPaginatorModule } from '@angular/material/paginator';
 import {MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatSortModule} from '@angular/material/sort';
+import { LeaderboardComponent } from 'src/leaderboard/leaderboard.component';
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LeaderboardComponent
   ],
   imports: [
     BrowserModule,

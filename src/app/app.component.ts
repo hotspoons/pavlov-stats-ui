@@ -7,5 +7,5 @@ import { LeaderboardComponent } from 'src/leaderboard/leaderboard.component';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent {
-  title = 'pavlov-stats-ui';
+  title = 'Why there no stuff here!?';
 }

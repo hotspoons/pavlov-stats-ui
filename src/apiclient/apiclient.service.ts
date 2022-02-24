@@ -4,11 +4,11 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Player } from '../dtos/player';
-import { RequestResponse } from '../dtos/request-response';
+import { RequestResponse, Sort } from '../dtos/request-response';
 import { Scoreboard } from '../dtos/scoreboard';
  
 @Injectable({ providedIn: 'root' })
-export class ApiClientService{
+export class ApiClientService{ 
     private baseUrl = "http://localhost:8080";     // TODO configuration
     private leaderboardEndpoint = "/leaderboard";  // TODO configuration
     private scoreboardEndpoing = "/scoreboard";    // TODO configuration
@@ -25,13 +25,13 @@ export class ApiClientService{
                     fromObject:{
                         offset: Number(requestResponse.offset),
                         amount: Number(requestResponse.amount),
-                        sort: requestResponse.sort,
+                        sort: Sort[requestResponse.sort],
                         ascending: requestResponse.ascending,
                         q: requestResponse.q
                     }
                 })
             };
-            return this.http.get<RequestResponse<Player>>(this.baseUrl + this.leaderboardEndpoint).
+            return this.http.get<RequestResponse<Player>>(this.baseUrl + this.leaderboardEndpoint, args).
                 pipe(
                     tap(_ => {}),
                     catchError(this.handleError<RequestResponse<Player>>('getPlayerStats'))
