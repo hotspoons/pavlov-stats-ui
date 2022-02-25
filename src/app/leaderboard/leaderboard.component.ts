@@ -8,14 +8,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ApiClientService } from '../apiclient/apiclient.service';
 import { RequestResponse } from 'src/app/apiclient/dtos/request-response';
 import { Player } from 'src/app/apiclient/dtos/player';
-import { environment } from '../../environments/environment';
+import { BaseTable } from '../base-table.component';
 
 @Component({
   selector: 'app-leaderboard',
   styleUrls: ['./leaderboard.component.css'],
   templateUrl: './leaderboard.component.html',
 })
-export class LeaderboardComponent implements OnInit, OnDestroy, AfterViewInit {
+export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy, AfterViewInit {
 
   private subs = new Subscription();
 
@@ -28,31 +28,15 @@ export class LeaderboardComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  private data: any;
-  pageSizeOptions: number[] = environment.settings.requestSettings.pageSizeOptions;
-  length: number;
-  amount: number;
-  offset: number;
-  pageIndex: number;
-  sortField: string;
-  ascending: boolean;
-  filter: string;
-  isLoading: boolean;
+  protected data: any;
   defaultRequest: RequestResponse<Player>;
 
 
   constructor(private apiClientService: ApiClientService,
     private changeDetectorRefs: ChangeDetectorRef) {
-    this.dataSource = new MatTableDataSource<Player>();
-    this.length = 0;
-    this.offset = 0;
-    this.pageIndex = 0;
-    this.amount = environment.settings.requestSettings.defaultAmount;
-    this.sortField = environment.settings.requestSettings.defaultSort;
-    this.ascending = environment.settings.requestSettings.defaultAscending;
-    this.filter = "";
-    this.isLoading = false;
-    this.defaultRequest = this.getRequest();
+      super();
+      this.dataSource = new MatTableDataSource<Player>();
+      this.defaultRequest = this.getRequest();
   }
 
 
@@ -62,7 +46,7 @@ export class LeaderboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   
   private load(){
-    this.isLoading = true;
+    super.isLoading = true;
     this.subs.add(this.apiClientService.getPlayerStats(this.getRequest())
       .subscribe(
         { 
@@ -70,14 +54,7 @@ export class LeaderboardComponent implements OnInit, OnDestroy, AfterViewInit {
               console.log(result);
               this.data = result.results;
               this.dataSource.data = this.data;
-              
-              this.length = Number(result.resultCount);
-              this.amount = Number(result.amount);
-              this.offset = Number(result.offset);
-              this.sortField = result.sort;
-              this.ascending = result.ascending;
-              this.filter = result.q;
-              this.isLoading = false;
+              super.setPaginationData(result);
               if(this.dataSource === undefined){
                 this.dataSource = new MatTableDataSource<Player>(this.data);
                 if(this.paginator !== undefined){
@@ -98,12 +75,12 @@ export class LeaderboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private getRequest(): RequestResponse<Player> {
     let requestResponse: RequestResponse<Player> = {
-      offset: BigInt(this.offset), 
-      amount: BigInt(this.amount),
-      resultCount: BigInt(this.length), 
-      sort: this.sortField,
-      ascending: this.ascending,
-      q: this.filter,
+      offset: BigInt(super.offset), 
+      amount: BigInt(super.amount),
+      resultCount: BigInt(super.length), 
+      sort: super.sortField,
+      ascending: super.ascending,
+      q: super.filter,
       results: []
   };
   return requestResponse;
@@ -115,26 +92,24 @@ export class LeaderboardComponent implements OnInit, OnDestroy, AfterViewInit {
     // TODO why do I have to do this check here, why does the ViewChild not guarantee that sort will be instantiated by the time this runs?
     if(this.sort !== undefined){
         this.sort.sortChange.subscribe((e) => {
-          this.sortField = Sort.getSortValueForField(e.active);
-          this.ascending = e.direction === 'asc';
-          this.offset = 0;
+          super.setSortValues(e);
+          super.sortField = Sort.getSortValueForField(e.active);
+          super.ascending = e.direction === 'asc';
+          super.offset = 0;
           this.load();
         }
       );
     }
   }
 
-
-  pageChanged(event: PageEvent) {
-    console.log({ event });
-    this.amount = event.pageSize;
-    this.offset = event.pageIndex * this.amount;
-    this.pageIndex = this.pageIndex;
+  
+  override pageChanged(event: PageEvent) {
+   super.pageChanged(event);
     this.load();
   }
 
   getSortDirection(){
-    return this.ascending ? 'asc': 'desc';
+    return super.ascending ? 'asc': 'desc';
   }
 
   ngOnDestroy() {
@@ -143,16 +118,10 @@ export class LeaderboardComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  
   // TODO debounce
-  applyFilter(event: Event) {
-    let filterValue: string = (event.target as HTMLInputElement).value;
-    
-    filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-    this.dataSource.filter = filterValue;
-    this.filter = filterValue;
-
+  override applyFilter(event: Event) {
+    super.applyFilter(event);
+    this.dataSource.filter = super.filter;
     this.offset = Number(this.defaultRequest.offset);
     this.load();
   }

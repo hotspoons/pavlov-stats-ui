@@ -7,9 +7,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiClientService } from '../apiclient/apiclient.service';
 import { RequestResponse } from 'src/app/apiclient/dtos/request-response';
-import { Player } from 'src/app/apiclient/dtos/player';
-import { environment } from '../../environments/environment';
+//import { Player } from 'src/app/apiclient/dtos/player';
 import { BaseTable } from '../base-table.component';
+import { Scoreboard } from '../apiclient/dtos/scoreboard';
 
 @Component({
   selector: 'app-scoreboard',
@@ -23,20 +23,23 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
   displayedColumns: string[] = ['playerName', 'kills', 'deaths', 'assists', 'kdr', 
   'games', 'lastPlayed',];
 
-  public dataSource: MatTableDataSource<Player>;
+  public dataSource: MatTableDataSource<Scoreboard>;
 
   // TODO why do these require guaranteeing? No examples I saw for even angular 13 + material had these
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   protected data: any;
-  defaultRequest: RequestResponse<Player>;
+  defaultRequest: RequestResponse<Scoreboard>;
+  isTwoTeams: boolean = false;
+  isCurrentScoreboard: boolean = true; // Presumably false when doing a historical scoreboard search
+  currentScoreboard?: Scoreboard;
 
 
   constructor(private apiClientService: ApiClientService,
     private changeDetectorRefs: ChangeDetectorRef) {
       super();
-      this.dataSource = new MatTableDataSource<Player>();
+      this.dataSource = new MatTableDataSource<Scoreboard>();
       this.defaultRequest = this.getRequest();
   }
 
@@ -48,7 +51,7 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
   
   private load(){
     super.isLoading = true;
-    this.subs.add(this.apiClientService.getPlayerStats(this.getRequest())
+    this.subs.add(this.apiClientService.getScoreboard(this.getRequest())
       .subscribe(
         { 
           next: (result) => {
@@ -57,7 +60,7 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
               this.dataSource.data = this.data;
               super.setPaginationData(result);
               if(this.dataSource === undefined){
-                this.dataSource = new MatTableDataSource<Player>(this.data);
+                this.dataSource = new MatTableDataSource<Scoreboard>(this.data);
                 if(this.paginator !== undefined){
                   this.dataSource.paginator = this.paginator;
                 }
@@ -66,6 +69,14 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
                 }
               }
               this.changeDetectorRefs.detectChanges();
+              if(this.data.length > 0){
+                if(this.isCurrentScoreboard){
+                  this.currentScoreboard = this.data[0];
+                  if(this.currentScoreboard?.blueTeam != null || this.currentScoreboard?.blueTeam?.length > 0){
+                    // TODO pick up here
+                  }
+                }
+              }
               
         },
         error: (err: HttpErrorResponse) => {
@@ -74,8 +85,8 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
       }));
   }
 
-  private getRequest(): RequestResponse<Player> {
-    let requestResponse: RequestResponse<Player> = {
+  private getRequest(): RequestResponse<Scoreboard> {
+    let requestResponse: RequestResponse<Scoreboard> = {
       offset: BigInt(super.offset), 
       amount: BigInt(super.amount),
       resultCount: BigInt(super.length), 
@@ -94,6 +105,9 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
     if(this.sort !== undefined){
         this.sort.sortChange.subscribe((e) => {
           super.setSortValues(e);
+          super.sortField = Sort.getSortValueForField(e.active);
+          super.ascending = e.direction === 'asc';
+          super.offset = 0;
           this.load();
         }
       );

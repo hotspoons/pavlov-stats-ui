@@ -1,9 +1,13 @@
+<mat-toolbar>
+  <div>Current Scoreboard</div>
+</mat-toolbar>
 <div class="filter-header">
   <mat-form-field>
     <input matInput (keyup)="applyFilter($event)" placeholder="Filter by name">
   </mat-form-field>
 </div>
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z8 overflow-hidden">
+<div class="float-left; w50">
   <table mat-table [dataSource]="dataSource" matSort (matSortActive)="sortField"
   matSortDisableClear (matSortDirection)="getSortDirection()">
 
@@ -54,11 +58,16 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+</div>
+<div class="float-right; w50">
+
+</div>
+  
 
 
-  <mat-paginator #paginator [length]="length" [pageIndex]="pageIndex" 
+  <!--<mat-paginator #paginator [length]="length" [pageIndex]="pageIndex" 
   [pageSize]="amount" (page)="pageChanged($event)"  aria-label="Select page"
   [pageSizeOptions]="pageSizeOptions">
-  </mat-paginator>
+  </mat-paginator> /* For scoreboard history */ -->
 
 </div>
