@@ -1,1 +1,64 @@
-<p>scoreboard works!</p>
+<div class="filter-header">
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Filter by name">
+  </mat-form-field>
+</div>
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort (matSortActive)="sortField"
+  matSortDisableClear (matSortDirection)="getSortDirection()">
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="playerName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header 
+      sortActionDescription="Sort by Name"> Player Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.playerName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="kills">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header 
+      sortActionDescription="Sort by Kills"> Kills </th>
+      <td mat-cell *matCellDef="let element"> {{element.kills}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="deaths">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header 
+      sortActionDescription="Sort by Deaths"> Deaths </th>
+      <td mat-cell *matCellDef="let element"> {{element.deaths}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="assists">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header 
+      sortActionDescription="Sort by Assists"> Assists </th>
+      <td mat-cell *matCellDef="let element"> {{element.assists}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="kdr">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header 
+      sortActionDescription="Sort by Kill/Death Ratio"> Kill/Death Ratio </th>
+      <td mat-cell *matCellDef="let element"> {{element.kdr}} </td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="games">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header 
+      sortActionDescription="Sort by Rounds Played"> Rounds Played </th>
+      <td mat-cell *matCellDef="let element"> {{element.games}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="lastPlayed">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header 
+      sortActionDescription="Sort by Last Played"> Last Played </th>
+      <td mat-cell *matCellDef="let element"> {{element.lastPlayed}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+
+  <mat-paginator #paginator [length]="length" [pageIndex]="pageIndex" 
+  [pageSize]="amount" (page)="pageChanged($event)"  aria-label="Select page"
+  [pageSizeOptions]="pageSizeOptions">
+  </mat-paginator>
+
+</div>

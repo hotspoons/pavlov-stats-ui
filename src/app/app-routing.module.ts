@@ -9,14 +9,13 @@ export const RouteList: Routes = [
   { path: '', redirectTo: '/scoreboard', pathMatch: 'full', data:{label: 'Home'} },
   { path: 'leaderboard', component:  LeaderboardComponent, data:{label: 'Leaderboard'}},
   { path: 'scoreboard', component:  ScoreboardComponent, data:{label: 'Scoreboard'}},
-
 ];
 
 export const appRouting = RouterModule.forRoot(RouteList);
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(RouteList),
+    RouterModule.forRoot(RouteList),  
     CommonModule
   ],
   exports: [ RouterModule ],
