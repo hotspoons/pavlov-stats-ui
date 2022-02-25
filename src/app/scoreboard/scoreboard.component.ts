@@ -10,6 +10,8 @@ import { RequestResponse } from 'src/app/apiclient/dtos/request-response';
 //import { Player } from 'src/app/apiclient/dtos/player';
 import { BaseTable } from '../base-table.component';
 import { Scoreboard } from '../apiclient/dtos/scoreboard';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Player } from '../apiclient/dtos/player';
 
 @Component({
   selector: 'app-scoreboard',
@@ -25,15 +27,17 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
 
   public dataSource: MatTableDataSource<Scoreboard>;
 
+  range: FormGroup;
+
   // TODO why do these require guaranteeing? No examples I saw for even angular 13 + material had these
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  protected data: any;
+  data: any;
   defaultRequest: RequestResponse<Scoreboard>;
-  isTwoTeams: boolean = false;
   isCurrentScoreboard: boolean = true; // Presumably false when doing a historical scoreboard search
-  currentScoreboard?: Scoreboard;
+  title: String = "";
+
 
 
   constructor(private apiClientService: ApiClientService,
@@ -41,6 +45,10 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
       super();
       this.dataSource = new MatTableDataSource<Scoreboard>();
       this.defaultRequest = this.getRequest();
+      this.range = new FormGroup({
+        start: new FormControl(),
+        end: new FormControl(),
+      });
   }
 
 
@@ -69,12 +77,23 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
                 }
               }
               this.changeDetectorRefs.detectChanges();
+              for(let i:number = 0; i < this.data.length; i++){
+                this
+              }
               if(this.data.length > 0){
                 if(this.isCurrentScoreboard){
-                  this.currentScoreboard = this.data[0];
-                  if(this.currentScoreboard?.blueTeam != null || this.currentScoreboard?.blueTeam?.length > 0){
-                    // TODO pick up here
-                  }
+                  this.title = "Current Scoreboard";
+                }
+                else{
+                  this.title = "Results";
+                }
+              }
+              else{
+                if(this.isCurrentScoreboard){
+                  this.title = "There is no game currently being played";
+                }
+                else{
+                  this.title = "There are no scoreboards that match your criteria";
                 }
               }
               
@@ -97,6 +116,20 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
   };
   return requestResponse;
 
+  }
+
+
+  isTwoTeams(scoreboard: Scoreboard): boolean{
+    if(scoreboard.redTeam !== undefined && scoreboard.redTeam.length > 0 && scoreboard.blueTeam !== undefined && scoreboard.blueTeam.length > 0){
+      return true;
+    }
+    return false;
+  }
+  isEmptyTeam(players: Player[]): boolean{
+    if(players === undefined || players.length === 0){
+      return true;
+    }
+    return false;
   }
 
   ngAfterViewInit() {
