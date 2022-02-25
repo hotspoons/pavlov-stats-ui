@@ -58,7 +58,7 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
 
   
   private load(){
-    super.isLoading = true;
+    super.setLoading(true);
     this.subs.add(this.apiClientService.getScoreboard(this.getRequest())
       .subscribe(
         { 
@@ -66,7 +66,7 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
               console.log(result);
               this.data = result.results;
               this.dataSource.data = this.data;
-              super.setPaginationData(result);
+              super.setRequestData(result);
               if(this.dataSource === undefined){
                 this.dataSource = new MatTableDataSource<Scoreboard>(this.data);
                 if(this.paginator !== undefined){
@@ -104,19 +104,6 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
       }));
   }
 
-  private getRequest(): RequestResponse<Scoreboard> {
-    let requestResponse: RequestResponse<Scoreboard> = {
-      offset: BigInt(super.offset), 
-      amount: BigInt(super.amount),
-      resultCount: BigInt(super.length), 
-      sort: super.sortField,
-      ascending: super.ascending,
-      q: super.filter,
-      results: []
-  };
-  return requestResponse;
-
-  }
 
 
   isTwoTeams(scoreboard: Scoreboard): boolean{
@@ -138,9 +125,11 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
     if(this.sort !== undefined){
         this.sort.sortChange.subscribe((e) => {
           super.setSortValues(e);
-          super.sortField = Sort.getSortValueForField(e.active);
-          super.ascending = e.direction === 'asc';
-          super.offset = 0;
+          let sortData = super.getRequest();
+          sortData.sort = Sort.getSortValueForField(e.active);
+          sortData.ascending = e.direction === 'asc';
+          sortData.offset = BigInt(0);
+          super.setRequestData(sortData);
           this.load();
         }
       );
@@ -153,10 +142,6 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
     this.load();
   }
 
-  getSortDirection(){
-    return super.ascending ? 'asc': 'desc';
-  }
-
   ngOnDestroy() {
     if (this.subs) {
       this.subs.unsubscribe();
@@ -166,8 +151,10 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
   // TODO debounce
   override applyFilter(event: Event) {
     super.applyFilter(event);
-    this.dataSource.filter = super.filter;
-    this.offset = Number(this.defaultRequest.offset);
+    let request:RequestResponse<any> = super.getRequest();
+    this.dataSource.filter = request.q;
+    request.offset = BigInt(0);
+    super.setRequestData(request);
     this.load();
   }
 }

@@ -9,6 +9,7 @@ import { ApiClientService } from '../apiclient/apiclient.service';
 import { RequestResponse } from 'src/app/apiclient/dtos/request-response';
 import { Player } from 'src/app/apiclient/dtos/player';
 import { BaseTable } from '../base-table.component';
+import { Nullable } from '../lib/nullable';
 
 @Component({
   selector: 'app-leaderboard',
@@ -22,6 +23,9 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
   displayedColumns: string[] = ['playerName', 'kills', 'deaths', 'assists', 'kdr', 
   'games', 'lastPlayed',];
 
+  playerName!: Nullable<string>;
+  start!: Nullable<Date>;
+  end!: Nullable<Date>;
   public dataSource: MatTableDataSource<Player>;
 
   // TODO why do these require guaranteeing? No examples I saw for even angular 13 + material had these
@@ -29,14 +33,15 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
   @ViewChild(MatSort) sort!: MatSort;
 
   protected data: any;
-  defaultRequest: RequestResponse<Player>;
 
 
   constructor(private apiClientService: ApiClientService,
     private changeDetectorRefs: ChangeDetectorRef) {
       super();
+      this.playerName = null;
+      this.start = null;
+      this.end = null;
       this.dataSource = new MatTableDataSource<Player>();
-      this.defaultRequest = this.getRequest();
   }
 
 
@@ -46,15 +51,15 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
 
   
   private load(){
-    super.isLoading = true;
-    this.subs.add(this.apiClientService.getPlayerStats(this.getRequest())
+    super.setLoading(true);
+    this.subs.add(this.apiClientService.getPlayerStats(super.getRequest())
       .subscribe(
         { 
           next: (result) => {
               console.log(result);
               this.data = result.results;
               this.dataSource.data = this.data;
-              super.setPaginationData(result);
+              super.setRequestData(result);
               if(this.dataSource === undefined){
                 this.dataSource = new MatTableDataSource<Player>(this.data);
                 if(this.paginator !== undefined){
@@ -65,7 +70,7 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
                 }
               }
               this.changeDetectorRefs.detectChanges();
-              
+              super.setLoading(false);
         },
         error: (err: HttpErrorResponse) => {
           console.log(err);
@@ -73,19 +78,6 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
       }));
   }
 
-  private getRequest(): RequestResponse<Player> {
-    let requestResponse: RequestResponse<Player> = {
-      offset: BigInt(super.offset), 
-      amount: BigInt(super.amount),
-      resultCount: BigInt(super.length), 
-      sort: super.sortField,
-      ascending: super.ascending,
-      q: super.filter,
-      results: []
-  };
-  return requestResponse;
-
-  }
 
   ngAfterViewInit() {
     // If the user changes the sort order, reset back to the first page.
@@ -93,9 +85,11 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
     if(this.sort !== undefined){
         this.sort.sortChange.subscribe((e) => {
           super.setSortValues(e);
-          super.sortField = Sort.getSortValueForField(e.active);
-          super.ascending = e.direction === 'asc';
-          super.offset = 0;
+          let sortData = super.getRequest();
+          sortData.sort = Sort.getSortValueForField(e.active);
+          sortData.ascending = e.direction === 'asc';
+          sortData.offset = BigInt(0);
+          super.setRequestData(sortData);
           this.load();
         }
       );
@@ -108,10 +102,6 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
     this.load();
   }
 
-  getSortDirection(){
-    return super.ascending ? 'asc': 'desc';
-  }
-
   ngOnDestroy() {
     if (this.subs) {
       this.subs.unsubscribe();
@@ -121,8 +111,20 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
   // TODO debounce
   override applyFilter(event: Event) {
     super.applyFilter(event);
-    this.dataSource.filter = super.filter;
-    this.offset = Number(this.defaultRequest.offset);
+    let request:RequestResponse<any> = super.getRequest();
+    this.dataSource.filter = request.q;
+    request.offset = BigInt(0);
+    request.q = this.formatQ();
+    super.setRequestData(request);
     this.load();
+  }
+  
+  formatQ(): string {
+    let q = {
+      playerName: this.playerName,
+      start: this.start,
+      end: this.end,
+    };
+    return JSON.stringify(q);
   }
 }

@@ -20,7 +20,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ScoreboardComponent } from './scoreboard/scoreboard.component';
 import { AppRoutingModule } from './app-routing.module';
-
+import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -46,7 +46,7 @@ import { AppRoutingModule } from './app-routing.module';
     MatButtonModule,
     MatSidenavModule,
     MatIconModule,
-    MatListModule
+    MatListModule,MatNativeDateModule
   ],
   providers: [],
   bootstrap: [AppComponent]

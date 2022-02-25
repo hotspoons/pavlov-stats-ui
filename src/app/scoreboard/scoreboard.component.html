@@ -18,13 +18,13 @@
   </mat-form-field>
 </div>
 <div *ngFor="let scoreboard of data">
-  
+
   <div class="mat-elevation-z8 overflow-hidden">
     <div [ngClass]="{'w50 float-left': isTwoTeams(scoreboard), 'hidden': isEmptyTeam(scoreboard.redTeam)}">
       <mat-toolbar>
         <div>Red Team</div>
       </mat-toolbar>
-      <table mat-table [dataSource]="scoreboard.redTeam" matSort (matSortActive)="sortField"
+      <table mat-table [dataSource]="scoreboard.redTeam" matSort (matSortActive)="getSortField()"
       matSortDisableClear (matSortDirection)="getSortDirection()">
     
         <!-- Position Column -->
@@ -79,7 +79,7 @@
       <mat-toolbar>
         <div>Red Team</div>
       </mat-toolbar>
-      <table mat-table [dataSource]="scoreboard.blueTeam" matSort (matSortActive)="sortField"
+      <table mat-table [dataSource]="scoreboard.blueTeam" matSort (matSortActive)="getSortField()"
       matSortDisableClear (matSortDirection)="getSortDirection()">
     
         <!-- Position Column -->

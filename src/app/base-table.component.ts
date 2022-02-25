@@ -6,24 +6,18 @@ import { RequestResponse } from 'src/app/apiclient/dtos/request-response';
 import { environment } from '../environments/environment';
 
 export abstract class BaseTable {
-    applyFilter(event: Event) {
-        let filterValue: string = (event.target as HTMLInputElement).value;
     
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-        
-        this.filter = filterValue;
-    }
    
-    pageSizeOptions: number[] = environment.settings.requestSettings.pageSizeOptions;
-    length: number;
-    amount: number;
-    offset: number;
-    pageIndex: number;
-    sortField: string;
-    ascending: boolean;
-    filter: string;
-    isLoading: boolean;
+    private pageSizeOptions: number[] = environment.settings.requestSettings.pageSizeOptions;
+    private length: number;
+    private amount: number;
+    private offset: number;
+    private pageIndex: number;
+    private sortField: string;
+    private sortDisplayField: string;
+    private ascending: boolean;
+    private filter: string;
+    private loading: boolean;
 
     constructor(){
         this.length = 0;
@@ -31,19 +25,32 @@ export abstract class BaseTable {
         this.pageIndex = 0;
         this.amount = environment.settings.requestSettings.defaultAmount;
         this.sortField = environment.settings.requestSettings.defaultSort;
+        this.sortDisplayField = environment.settings.requestSettings.defaultSortDisplayField;
         this.ascending = environment.settings.requestSettings.defaultAscending;
         this.filter = "";
-        this.isLoading = false;
+        this.loading = false;
     }
 
-    protected setPaginationData(result: RequestResponse<any>) {
+    protected setRequestData(result: RequestResponse<any>) {
         this.length = Number(result.resultCount);
         this.amount = Number(result.amount);
         this.offset = Number(result.offset);
         this.sortField = result.sort;
         this.ascending = result.ascending;
         this.filter = result.q;
-        this.isLoading = false;
+        this.loading = false;
+    }
+    getRequest<T>():RequestResponse<T>{
+        let requestResponse: RequestResponse<T> = {
+            offset: BigInt(this.offset), 
+            amount: BigInt(this.amount),
+            resultCount: BigInt(this.length), 
+            sort: this.sortField,
+            ascending: this.ascending,
+            q: this.filter,
+            results: []
+        };
+        return requestResponse;
     }
 
     protected pageChanged(event: PageEvent) {
@@ -55,7 +62,50 @@ export abstract class BaseTable {
 
     protected setSortValues(e: MatSortSort){
         this.sortField = Sort.getSortValueForField(e.active);
+        this.sortDisplayField = e.active;
         this.ascending = e.direction === 'asc';
         this.offset = 0;
+    }
+
+    applyFilter(event: Event) {
+        let filterValue: string = (event.target as HTMLInputElement).value;
+        filterValue = filterValue.trim(); // Remove whitespace
+        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+        
+        this.filter = filterValue;
+    }
+
+    protected isLoading(): boolean{
+        return this.loading;
+    }
+    protected setLoading(loading: boolean){
+        this.loading = loading;
+    }
+    getPageSizeOptions(): number[]{
+        return this.pageSizeOptions;
+    }
+    getPageIndex(): number{
+        return this.pageIndex;
+    }
+    protected setPageIndex(pageIndex: number){
+        this.pageIndex = pageIndex;
+    }
+
+    getSortDirection(): string{
+      return this.ascending ? 'asc': 'desc';
+    }
+    getSortField(): string{
+        return this.sortDisplayField;
+    }
+
+    getLength(): number{
+        return this.length;
+    }
+    getAmount(): number{
+        return this.amount;
+    }
+
+    getFilter(): string{
+        return this.filter;
     }
 }

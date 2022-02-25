@@ -11,6 +11,7 @@ export const environment = {
       pageSizeOptions:[3,10,50,100,200],
       defaultAmount: 3,
       defaultSort: "KDA",
+      defaultSortDisplayField: "kills",
       defaultAscending: false
     },
     api:{

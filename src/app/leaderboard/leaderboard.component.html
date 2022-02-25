@@ -1,10 +1,10 @@
 <div class="filter-header">
   <mat-form-field>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Filter by name">
+    <input matInput (keyup)="applyFilter($event)" placeholder="Filter matches by player name">
   </mat-form-field>
 </div>
 <div class="mat-elevation-z8">
-  <table mat-table [dataSource]="dataSource" matSort (matSortActive)="sortField"
+  <table mat-table [dataSource]="dataSource" matSort (matSortActive)="getSortField()"
   matSortDisableClear (matSortDirection)="getSortDirection()">
 
     <!-- Position Column -->
@@ -56,9 +56,9 @@
   </table>
 
 
-  <mat-paginator #paginator [length]="length" [pageIndex]="pageIndex" 
-  [pageSize]="amount" (page)="pageChanged($event)"  aria-label="Select page"
-  [pageSizeOptions]="pageSizeOptions">
+  <mat-paginator #paginator [length]="getLength()" [pageIndex]="getPageIndex()" 
+  [pageSize]="getAmount()" (page)="pageChanged($event)"  aria-label="Select page"
+  [pageSizeOptions]="getPageSizeOptions()">
   </mat-paginator>
 
 </div>
