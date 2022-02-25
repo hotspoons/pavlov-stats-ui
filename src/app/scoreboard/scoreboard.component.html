@@ -20,7 +20,9 @@
 <div *ngFor="let scoreboard of data">
 
   <div class="mat-elevation-z8 overflow-hidden">
-    <div [ngClass]="{'w50 float-left': isTwoTeams(scoreboard), 'hidden': isEmptyTeam(scoreboard.redTeam)}">
+    <!--TODO there should be match-level metadata here like total players, team scores, etc. -->
+    <div [class.float-left]="isTwoTeams(scoreboard)" [class.w50]="isTwoTeams(scoreboard)" 
+    [class.hidden]="isEmptyTeam(scoreboard.redTeam)">
       <mat-toolbar>
         <div>Red Team</div>
       </mat-toolbar>
@@ -75,9 +77,10 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
     </div>
-    <div [ngClass]="{'w50 float-right': isTwoTeams(scoreboard), 'hidden': isEmptyTeam(scoreboard.blueTeam)}">
+    <div [class.float-right]="isTwoTeams(scoreboard)" [class.w50]="isTwoTeams(scoreboard)" 
+    [class.hidden]="isEmptyTeam(scoreboard.blueTeam)">
       <mat-toolbar>
-        <div>Red Team</div>
+        <div>Blue Team</div>
       </mat-toolbar>
       <table mat-table [dataSource]="scoreboard.blueTeam" matSort (matSortActive)="getSortField()"
       matSortDisableClear (matSortDirection)="getSortDirection()">

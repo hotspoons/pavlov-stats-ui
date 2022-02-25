@@ -1,0 +1,13 @@
+.w50{
+    width:49.9%
+}
+
+.float-left{
+    float:left;
+}
+.float-right{
+    float:right;
+}
+.hidden{
+    display: none;
+}

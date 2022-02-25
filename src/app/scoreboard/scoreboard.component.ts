@@ -12,6 +12,7 @@ import { BaseTable } from '../base-table.component';
 import { Scoreboard } from '../apiclient/dtos/scoreboard';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Player } from '../apiclient/dtos/player';
+import { Nullable } from '../lib/nullable';
 
 @Component({
   selector: 'app-scoreboard',
@@ -38,6 +39,9 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
   isCurrentScoreboard: boolean = true; // Presumably false when doing a historical scoreboard search
   title: String = "";
 
+  playerName!: Nullable<string>;
+  start!: Nullable<Date>;
+  end!: Nullable<Date>;
 
 
   constructor(private apiClientService: ApiClientService,
@@ -45,6 +49,9 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
       super();
       this.dataSource = new MatTableDataSource<Scoreboard>();
       this.defaultRequest = this.getRequest();
+      this.playerName = null;
+      this.start = null;
+      this.end = null;
       this.range = new FormGroup({
         start: new FormControl(),
         end: new FormControl(),
@@ -107,13 +114,13 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
 
 
   isTwoTeams(scoreboard: Scoreboard): boolean{
-    if(scoreboard.redTeam !== undefined && scoreboard.redTeam.length > 0 && scoreboard.blueTeam !== undefined && scoreboard.blueTeam.length > 0){
+    if(scoreboard != null && scoreboard.redTeam !== null && scoreboard.redTeam.length > 0 && scoreboard.blueTeam !== null && scoreboard.blueTeam.length > 0){
       return true;
     }
     return false;
   }
   isEmptyTeam(players: Player[]): boolean{
-    if(players === undefined || players.length === 0){
+    if(players === null || players.length === 0){
       return true;
     }
     return false;
@@ -148,13 +155,24 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
     }
   }
 
+
   // TODO debounce
   override applyFilter(event: Event) {
     super.applyFilter(event);
     let request:RequestResponse<any> = super.getRequest();
-    this.dataSource.filter = request.q;
+    this.playerName = this.dataSource.filter = request.q;
     request.offset = BigInt(0);
+    request.q = this.formatQ();
     super.setRequestData(request);
     this.load();
+  }
+  
+  formatQ(): string {
+    let q = {
+      playerName: this.playerName,
+      start: this.start,
+      end: this.end,
+    };
+    return JSON.stringify(q);
   }
 }

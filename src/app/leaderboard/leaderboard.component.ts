@@ -9,7 +9,6 @@ import { ApiClientService } from '../apiclient/apiclient.service';
 import { RequestResponse } from 'src/app/apiclient/dtos/request-response';
 import { Player } from 'src/app/apiclient/dtos/player';
 import { BaseTable } from '../base-table.component';
-import { Nullable } from '../lib/nullable';
 
 @Component({
   selector: 'app-leaderboard',
@@ -23,9 +22,6 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
   displayedColumns: string[] = ['playerName', 'kills', 'deaths', 'assists', 'kdr', 
   'games', 'lastPlayed',];
 
-  playerName!: Nullable<string>;
-  start!: Nullable<Date>;
-  end!: Nullable<Date>;
   public dataSource: MatTableDataSource<Player>;
 
   // TODO why do these require guaranteeing? No examples I saw for even angular 13 + material had these
@@ -38,9 +34,6 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
   constructor(private apiClientService: ApiClientService,
     private changeDetectorRefs: ChangeDetectorRef) {
       super();
-      this.playerName = null;
-      this.start = null;
-      this.end = null;
       this.dataSource = new MatTableDataSource<Player>();
   }
 
@@ -114,17 +107,7 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
     let request:RequestResponse<any> = super.getRequest();
     this.dataSource.filter = request.q;
     request.offset = BigInt(0);
-    request.q = this.formatQ();
     super.setRequestData(request);
     this.load();
-  }
-  
-  formatQ(): string {
-    let q = {
-      playerName: this.playerName,
-      start: this.start,
-      end: this.end,
-    };
-    return JSON.stringify(q);
   }
 }
