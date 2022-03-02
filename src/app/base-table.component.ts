@@ -18,6 +18,9 @@ export abstract class BaseTable {
     private ascending: boolean;
     private filter: string;
     private loading: boolean;
+    private autoRefreshRate: number;
+    baseTable?: BaseTable;
+    private refreshInterval?: any;
 
     constructor(){
         this.length = 0;
@@ -27,6 +30,7 @@ export abstract class BaseTable {
         this.sortField = environment.settings.requestSettings.defaultSort;
         this.sortDisplayField = environment.settings.requestSettings.defaultSortDisplayField;
         this.ascending = environment.settings.requestSettings.defaultAscending;
+        this.autoRefreshRate = environment.settings.autoRefreshRate;
         this.filter = "";
         this.loading = false;
     }
@@ -75,6 +79,28 @@ export abstract class BaseTable {
         this.filter = filterValue;
     }
 
+      // TODO wire these to a toggle switch
+  public startAutoRefresh(){
+    this.stopAutoRefresh();
+    if(this.getAutoRefreshRate() > 0){
+      this.refreshInterval = setInterval(() => {
+        this.load();
+      }, this.getAutoRefreshRate());
+    }
+  }
+
+  public stopAutoRefresh(){
+    if(this.refreshInterval != null){
+      clearInterval(this.refreshInterval);
+    }
+  }
+
+    abstract load(): void;
+
+    protected setChild(baseTable: BaseTable){
+        this.baseTable = baseTable;
+    }
+
     protected isLoading(): boolean{
         return this.loading;
     }
@@ -107,5 +133,13 @@ export abstract class BaseTable {
 
     getFilter(): string{
         return this.filter;
+    }
+
+    getAutoRefreshRate(): number{
+        return this.autoRefreshRate;
+    }
+
+    overrideRefreshRate(rateInMs: number){
+        this.autoRefreshRate = rateInMs;
     }
 }

@@ -3,6 +3,7 @@ export const environment = {
   settings:{
     appTitle: 'Pavlov VR Stats for XYZ server',
     otherLinks:[],
+    autoRefreshRate: 5000,
     requestSettings:{
       pageSizeOptions:[10,50,100,200],
       defaultAmount: 50,

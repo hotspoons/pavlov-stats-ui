@@ -47,6 +47,7 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
   constructor(private apiClientService: ApiClientService,
     private changeDetectorRefs: ChangeDetectorRef) {
       super();
+      super.setChild(this);
       this.dataSource = new MatTableDataSource<Scoreboard>();
       this.defaultRequest = this.getRequest();
       this.playerName = null;
@@ -61,10 +62,11 @@ export class ScoreboardComponent extends BaseTable implements OnInit, OnDestroy,
 
   ngOnInit() {
     this.load();
+    super.startAutoRefresh();
   }
 
   
-  private load(){
+  public load(){
     super.setLoading(true);
     this.subs.add(this.apiClientService.getScoreboard(this.getRequest())
       .subscribe(

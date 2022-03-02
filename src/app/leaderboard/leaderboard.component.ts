@@ -34,16 +34,17 @@ export class LeaderboardComponent extends BaseTable implements OnInit, OnDestroy
   constructor(private apiClientService: ApiClientService,
     private changeDetectorRefs: ChangeDetectorRef) {
       super();
+      super.setChild(this);
       this.dataSource = new MatTableDataSource<Player>();
   }
 
 
   ngOnInit() {
     this.load();
+    super.startAutoRefresh();
   }
-
   
-  private load(){
+  public load(){
     super.setLoading(true);
     this.subs.add(this.apiClientService.getPlayerStats(super.getRequest())
       .subscribe(
