@@ -16,7 +16,7 @@ export const environment = {
       defaultAscending: false
     },
     api:{
-      baseUrl: "http://localhost:8080/api",
+      baseUrl: "http://192.168.1.162:8080/api",
       leaderboardEndpoint: "/leaderboard",
       scoreboardEndpoing: "/scoreboard",
       httpHeaders:{ 'Content-Type': 'application/json' }

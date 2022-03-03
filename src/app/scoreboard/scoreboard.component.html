@@ -19,7 +19,7 @@
 </div>
 <div *ngFor="let scoreboard of data">
   <div class="mat-elevation-z2">
-    <h4 class="mat-h4">Map: <em>{{scoreboard.mapName}}</em></h4>
+    <h4 class="mat-h4">Map: <em>{{scoreboard.mapDisplayName}}</em></h4>
     <h4 class="mat-h4">Game Mode: <em>{{scoreboard.gameMode}}</em></h4>
     <h4 class="mat-h4">Players: <em>{{scoreboard.playerCount}}</em></h4>
     <h4 *ngIf="scoreboard.started != null" class="mat-h4">Started: <em>{{scoreboard.started}}</em></h4>
