@@ -74,7 +74,8 @@
         </ng-container>
     
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns; let element;" 
+        class="hover" [class.selected]="element.changed === true" mat-ripple matRipple></tr>
       </table>
     </div>
     <div [class.float-right]="isTwoTeams(scoreboard)" [class.w50]="isTwoTeams(scoreboard)" 

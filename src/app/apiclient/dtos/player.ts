@@ -8,4 +8,5 @@ export interface Player{
     kdr: number;
     games: bigint;
     lastPlayed: Date;
+    changed: boolean;
 }
