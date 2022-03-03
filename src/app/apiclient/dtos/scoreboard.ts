@@ -4,7 +4,9 @@ export interface Scoreboard{
     id: string;
     mapName: string;
     gameMode: string;
-    player: bigint;
+    playerCount: string;
+    started: Date;
+    concluded:Date;
     blueTeam: Array<Player>;
     redTeam: Array<Player>;
 }

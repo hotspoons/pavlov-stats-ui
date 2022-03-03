@@ -19,7 +19,7 @@ export class Sort{
         "assists": "ADK",
         "kdr": "KDR",
         "games": "GAMES",
-        "lastPlayed": "NAME"
+        "lastPlayed": "LAST_PLAYED"
     };
     private static values: string[] = ["KDA", "DKA", "ADK", "KDR", "LAST_PLAYED", "GAMES", "NAME"];
     

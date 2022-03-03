@@ -18,7 +18,13 @@
   </mat-form-field>
 </div>
 <div *ngFor="let scoreboard of data">
-
+  <div class="mat-elevation-z2">
+    <h4 class="mat-h4">Map: <em>{{scoreboard.mapName}}</em></h4>
+    <h4 class="mat-h4">Game Mode: <em>{{scoreboard.gameMode}}</em></h4>
+    <h4 class="mat-h4">Players: <em>{{scoreboard.playerCount}}</em></h4>
+    <h4 *ngIf="scoreboard.started != null" class="mat-h4">Started: <em>{{scoreboard.started}}</em></h4>
+    <h4 *ngIf="scoreboard.concluded != null" class="mat-h4">Concluded: <em>{{scoreboard.concluded}}</em></h4>
+  </div>
   <div class="mat-elevation-z8 overflow-hidden">
     <!--TODO there should be match-level metadata here like total players, team scores, etc. -->
     <div [class.float-left]="isTwoTeams(scoreboard)" [class.w50]="isTwoTeams(scoreboard)" 
